@@ -35,6 +35,7 @@ class InspectAllOrganizations {
       }
     };
   }
+  
 
   // function to encode file data to base64 encoded string
   getImage64(file) {
@@ -3621,7 +3622,39 @@ tr td.line-ttfb, tr th.line-ttfb {
     }
   }
 
+  async getToken(){
+    let _this = this;
+    await this.doActualLogin().then(function(data){
+      if (debug) console.log(data);
+      _this.apiKey = data['access_token'];
+         //return data['access_token']
+    });
+
+  }
   async doActualLogin() {
+    /*let _this = this;
+      return new Promise((resolve, reject) => {
+        console.log("calling oauth token.")
+        request.post(
+          `${this.baseUrl}/oauth/token?grant_type=client_credentials`,
+          {
+            'auth': {
+              'user': _this.settings.apiKeyUser,
+              'pass': _this.settings.apiKeyPass,
+              'sendImmediately': false
+            }},
+          (error, response, body) => {
+            console.log(response);
+            if ((response && response.statusCode) !== 200) {
+              reject();
+              return;
+            }
+            resolve(JSON.parse(body));
+          }
+        );
+      });*/
+
+    
     let mybrowser = await puppeteer.launch({ headless: false });
     const adminpage = await mybrowser.newPage();
 
@@ -3691,6 +3724,7 @@ tr td.line-ttfb, tr th.line-ttfb {
     console.log("Login platform.")
     while (retry < 3) {
       try {
+        //return inspect.getToken();
         return inspect.doActualLogin();
       } catch {
         retry = retry + 1;
@@ -3700,7 +3734,8 @@ tr td.line-ttfb, tr th.line-ttfb {
 
   async start() {
     await inspect.loginPlatform();
-    console.log("Apikey: " + this.apiKey);
+    //console.log("Apikey: " + this.apiKey);
+    //return;
     await inspect
       .loginSFDC(this.settings.SFDC_User, this.settings.SFDC_Pass)
       .then(function(data) {
@@ -3723,7 +3758,7 @@ tr td.line-ttfb, tr th.line-ttfb {
     }
     //Get first
     let mycounter = 0;
-    let debugCount = 350;
+    let debugCount = 4350;
     let pageIndex = 0;
     let orgs = await this.getOrganizations(pageIndex);
 
@@ -3733,7 +3768,7 @@ tr td.line-ttfb, tr th.line-ttfb {
         //console.log(org);
         //if (toprocess.includes(org.id)) {
         if (!org.readOnly) {
-          console.log(org.id);
+          console.log(mycounter + " == " +org.id);
           await this.inspectOrganization(org);
           //          break;
           //if (debug) {
@@ -3765,7 +3800,7 @@ tr td.line-ttfb, tr th.line-ttfb {
       catch(e) { console.log(e); }
       if (files.length > 0)
         for (var i = 0; i < files.length; i++) {
-          var filePath = results + '/' + files[i];
+          var filePath = 'results' + '/' + files[i];
           if (fs.statSync(filePath).isFile())
             fs.unlinkSync(filePath);
         }
