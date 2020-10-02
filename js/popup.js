@@ -35,6 +35,7 @@ function getReportHTML(id) {
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato">
   <link rel="stylesheet" href="http://coveo.github.io/vapor/dist/css/CoveoStyleGuide.css">
   <link rel="stylesheet" href="https://static.cloud.coveo.com/styleguide/v2.10.0/css/CoveoStyleGuide.css">
+  <meta http-equiv="Content-Security-Policy" content="script-src-elem 'none'; script-src 'none'">
   <style type="text/css">
   body.coveo-styleguide {display:block; padding: 0 30px 30px;}
   div.wheel {display: inline-block; text-align: center; margin: 5px 10px; cursor: default; width: 130px;}
@@ -189,6 +190,23 @@ tr td.line-ttfb, tr th.line-ttfb {
   return html;
 }
 
+var entityMap = {
+  '&': '&amp;',
+  '<': '&lt;',
+  '>': '&gt;',
+  '"': '&quot;',
+  "'": '&#39;',
+  '/': '&#x2F;',
+  '`': '&#x60;',
+  '=': '&#x3D;'
+};
+// escaping pulled from mustache.js
+function escapeHtml (string) {
+  return String(string).replace(/[&<>"'`=\/]/g, function (s) {
+    return entityMap[s];
+  });
+}
+
 //Download the report
 function downloadReport(id) {
   try {
@@ -274,6 +292,7 @@ let processDetail = (section, data, tests) => {
       }
     }
 
+
     //If it should not be calculated for the total score
     if (attr.notForTotal === undefined) {
       tests.total++;
@@ -288,7 +307,7 @@ let processDetail = (section, data, tests) => {
           <small>${hint}</small>
         </td>
         <td class="line-indicator" width="1px">${validIcon}</td>
-        <td class="line-result ${additionalClass}">${value}</td>
+        <td class="line-result ${additionalClass}">${escapeHtml(value)}</td>
       </tr>`;
   });
 
@@ -1047,7 +1066,7 @@ let processReport = (data) => {
   let maintitle = "Implementation Report";
 
   if (data.forOrgReport) {
-    maintitle = "Organization Report<br>" + data.name;
+    maintitle = "Organization Report<br>" + escapeHtml(data.name);
   }
   document.getElementById('scores').innerHTML = '<h2>' + maintitle + '</h2>' + scores.join('\n');
   $('#legend').show();
@@ -1539,7 +1558,7 @@ function getSourceInfo(report) {
                 report.sourceWebWarning = true;
               }
               report.docsfromsources += source.information.numberOfDocuments;
-              report.details += "<tr><td>" + source.name + "</td><td style='text-align:right'>" + source.information.numberOfDocuments.toLocaleString() + "</td></tr>";
+              report.details += "<tr><td>" + escapeHtml(source.name) + "</td><td style='text-align:right'>" + source.information.numberOfDocuments.toLocaleString() + "</td></tr>";
             });
             report.details += "</table>"
             report.sourceids = data.map(source => { let obj = { id: source.id, name: source.name }; return obj; });
@@ -1555,7 +1574,7 @@ function getSourceInfo(report) {
             report.details += "<table><tr><th><b>Source</b></th><th style='text-align:right'><b>Nr of Docs</b></th></tr>"
             data.sources.map(source => {
               report.docsfromsources += source.numberOfDocuments;
-              report.details += "<tr><td>" + source.name + "</td><td style='text-align:right'>" + source.numberOfDocuments.toLocaleString() + "</td></tr>";
+              report.details += "<tr><td>" + escapeHtml(source.name) + "</td><td style='text-align:right'>" + source.numberOfDocuments.toLocaleString() + "</td></tr>";
             });
             report.details += "</table>"
             report.sourceids = data.sources.map(source => { let obj = { id: source.id, name: source.name }; return obj; });
@@ -1720,7 +1739,7 @@ function getExtensionInfo(report) {
           if (data.filter(source => { if (source.status.dailyStatistics.averageDurationInSeconds > 0) return source.name; }).length > 0) {
             report.details += "<hr><h4>Average execution time Extensions:</h4>";
             data.filter(source => { if (source.status.dailyStatistics.averageDurationInSeconds > 0) return source.name; }).map((source) => {
-              report.details += source.name + ": <b>" + source.status.dailyStatistics.averageDurationInSeconds.toFixed(2) + "</b> seconds<BR>";
+              report.details += escapeHtml(source.name) + ": <b>" + source.status.dailyStatistics.averageDurationInSeconds.toFixed(2) + "</b> seconds<BR>";
             });
           }
         }
