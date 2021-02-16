@@ -2,7 +2,7 @@
   "manifest_version": 2,
   "name": "Coveo Checkers",
   "short_name": "coveo-checker",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A Chrome extension to analyze your Coveo Org and Implementation.",
 
   "icons": {
