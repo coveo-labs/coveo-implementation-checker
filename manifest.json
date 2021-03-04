@@ -2,36 +2,38 @@
   "manifest_version": 2,
   "name": "Coveo Checkers",
   "short_name": "coveo-checker",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "A Chrome extension to analyze your Coveo Org and Implementation.",
-
   "icons": {
     "16": "images/16.png",
     "48": "images/48.png",
     "128": "images/128.png"
   },
   "background": {
-    "scripts": ["js/background.js"]
+    "scripts": [
+      "js/background.js"
+    ]
   },
   "browser_action": {
     "default_icon": "/images/icon.png",
     "default_popup": "/popup.html"
   },
-
-  "content_scripts": [{
-    "run_at": "document_end",
-    "matches": [
-      "<all_urls>"
-    ],
-    "js": [
-      "/js/content-loader.js",
-      "/js/content.js"
-    ],
-    "css": [
-      "/css/inject.css"
-    ],
-    "all_frames": false
-  }],
+  "content_scripts": [
+    {
+      "run_at": "document_end",
+      "matches": [
+        "<all_urls>"
+      ],
+      "js": [
+        "/js/content-loader.js",
+        "/js/content.js"
+      ],
+      "css": [
+        "/css/inject.css"
+      ],
+      "all_frames": false
+    }
+  ],
   "permissions": [
     "activeTab",
     "tabs",
@@ -39,5 +41,4 @@
     "webRequestBlocking",
     "*://*/"
   ]
-
 }
