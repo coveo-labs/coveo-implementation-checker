@@ -135,6 +135,7 @@ class InspectAllOrganizations {
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato">
   <link rel="stylesheet" href="http://coveo.github.io/vapor/dist/css/CoveoStyleGuide.css">
   <link rel="stylesheet" href="https://static.cloud.coveo.com/styleguide/v2.10.0/css/CoveoStyleGuide.css">
+  <meta http-equiv="Content-Security-Policy" content="script-src-elem 'none'; script-src 'none'">
   <style type="text/css">
   body.coveo-styleguide {display:block; padding: 0 30px 30px;}
   div.wheel {display: inline-block; text-align: center; margin: 5px 10px; cursor: default; width: 130px;}
